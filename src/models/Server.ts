@@ -3,6 +3,8 @@ import cors from "cors";
 import morgan from "morgan";
 import connectDB from "../config/db";
 import { PORT } from "../config/conf";
+import authRouter from "../routes/auth.routes";
+import userRouter from "../routes/user.routes";
 
 export class Server {
   private app: express.Application;
@@ -22,7 +24,8 @@ export class Server {
   }
 
   routes() {
-    // Aquí defines tus rutas
+    this.app.use("/api/auth", authRouter);
+    this.app.use("/api/users", userRouter);
   }
 
   async listen() {

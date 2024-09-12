@@ -1,4 +1,10 @@
 import User from "../models/user.model";
+import * as bcrypt from "bcryptjs";
+
+interface UserUpdate {
+  password?: string;
+  // Otras propiedades que quieras incluir
+}
 
 export class UserService {
   static async getAllUsers() {
@@ -12,9 +18,29 @@ export class UserService {
   }
 
   static async updateUser(userId: string, updates: Partial<typeof User>) {
-    const user = await User.findByIdAndUpdate(userId, updates, { new: true });
+    // Obtener el usuario existente
+    const user = await User.findById(userId);
     if (!user) throw new Error("Usuario no encontrado");
-    return user;
+
+    if (updates.password) {
+      const isSamePassword = await bcrypt.compare(
+        updates.password,
+        user.get("password")
+      );
+      if (!isSamePassword) {
+        updates.password = await bcrypt.hash(updates.password, 10);
+      }
+    } else {
+      // Mantener la contraseña existente si no se envía una nueva contraseña
+      updates.password = user.get("password");
+    }
+
+    // Actualizar el usuario con los cambios (incluida la contraseña si fue actualizada)
+    const updatedUser = await User.findByIdAndUpdate(userId, updates, {
+      new: true,
+    });
+
+    return updatedUser;
   }
 
   static async deleteUser(userId: string) {
