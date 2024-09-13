@@ -5,6 +5,7 @@ export interface IEquipment extends Document {
   type: string;
   status: string;
   location: string;
+  dateAdquisition: Date;
 }
 
 const equipmentSchema = new Schema({
@@ -22,6 +23,10 @@ const equipmentSchema = new Schema({
   },
   location: {
     type: String,
+    required: true,
+  },
+  dateAdquisition: {
+    type: Date,
     required: true,
   },
 });

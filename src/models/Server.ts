@@ -5,6 +5,7 @@ import connectDB from "../config/db";
 import { PORT } from "../config/conf";
 import authRouter from "../routes/auth.routes";
 import userRouter from "../routes/user.routes";
+import equipaemntRouter from "../routes/equipament.routes";
 
 export class Server {
   private app: express.Application;
@@ -26,13 +27,12 @@ export class Server {
   routes() {
     this.app.use("/api/auth", authRouter);
     this.app.use("/api/users", userRouter);
+    this.app.use("/api/equipament", equipaemntRouter);
   }
 
   async listen() {
-    // Conectar a MongoDB
     await connectDB();
 
-    // Iniciar el servidor después de que MongoDB se haya conectado
     this.app.listen(this.port, () => {
       console.log(`Server running on http://localhost:${this.port}`);
     });

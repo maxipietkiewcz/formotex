@@ -5,6 +5,8 @@ export class EquipamentService {
     name: string;
     location: string;
     status: string;
+    type: string;
+    dateAdquisition: Date;
   }) {
     const newItem = new equipmentModel(data);
     await newItem.save();

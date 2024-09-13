@@ -12,9 +12,13 @@ export class AuthService {
 
     if (user.role !== role) throw new Error("Rol incorrecto");
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
-      expiresIn: process.env.JWT_EXPIRATION || "1h",
-    });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: process.env.JWT_EXPIRATION || "1h",
+      }
+    );
 
     return token;
   }
@@ -23,10 +27,11 @@ export class AuthService {
     const existingUser = await User.findOne({ username });
     if (existingUser) throw new Error("El usuario ya existe");
 
+    const validRoles = ["user", "admin"];
+    if (!validRoles.includes(role)) throw new Error("Rol no válido");
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ username, password: hashedPassword });
-
-    if (role) newUser.role = role;
 
     await newUser.save();
     return newUser;
